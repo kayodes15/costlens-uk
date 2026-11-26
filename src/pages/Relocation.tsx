@@ -135,7 +135,7 @@ export function Relocation({ data, selected, loading }: {
   }
 
   return <section className="model-page">
-    <div className="tool-intro"><p className="eyebrow">Relocation</p><h1>How would moving change your budget?</h1>
+    <div className="tool-intro"><p className="eyebrow">Relocation</p><h1 tabIndex={-1}>How would moving change your budget?</h1>
       <p className="lede">Compare monthly take-home income and living costs across two locations.</p></div>
     <div className="paired location-pair no-print">
       <LocationPicker title="Current location" locations={data.locations} selected={current} loading={loading}

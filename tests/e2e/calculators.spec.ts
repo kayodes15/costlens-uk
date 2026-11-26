@@ -247,3 +247,75 @@ test('information pages and keyboard navigation', async ({ page }) => {
     await checkAccessibility(page);
   }
 });
+
+test('mobile menu navigation shows the sticky header and focuses the page heading', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 760 });
+  await page.goto('/');
+  const header = page.getByRole('banner');
+  const menu = page.getByRole('navigation', { name: 'Main navigation' });
+  const heading = page.getByRole('main').getByRole('heading', { level: 1 });
+
+  for (const route of ['salary', 'relocation', 'home-ownership', 'economic-insights', 'about', 'methodology', 'home']) {
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await expect.poll(() => header.evaluate((element) => element.getBoundingClientRect().top)).toBe(0);
+    await menu.locator(`a[href="#${route}"]`).click();
+    await expect(page).toHaveURL(new RegExp(`#${route}$`));
+    await expect(heading).toBeFocused();
+    await expect(heading).toBeInViewport();
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+    await expect(header).toBeInViewport({ ratio: 1 });
+    const headerBox = await header.boundingBox();
+    const headingBox = await heading.boundingBox();
+    expect(headerBox!.height).toBeLessThan(140);
+    expect(headingBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height);
+  }
+
+  await menu.getByRole('link', { name: 'Salary & Pay Rise' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(heading).toBeFocused();
+  const payComparison = page.getByRole('link', { name: 'Pay comparison' });
+  await page.keyboard.press('Tab');
+  await expect(payComparison).toBeFocused();
+  await page.evaluate(() => window.scrollBy(0, 320));
+  await page.keyboard.press('Tab');
+  const payRise = page.getByRole('link', { name: 'Pay rise target' });
+  await expect(payRise).toBeFocused();
+  await expect.poll(() => payRise.evaluate((element) =>
+    element.getBoundingClientRect().top - document.querySelector('.site-header')!.getBoundingClientRect().bottom,
+  )).toBeGreaterThanOrEqual(0);
+  await checkAccessibility(page);
+});
+
+test('serves the linked site icons and web manifest', async ({ page }) => {
+  await page.goto('/');
+  for (const [selector, file, size] of [
+    ['link[rel="icon"][sizes="any"]', 'favicon.svg', 0],
+    ['link[rel="icon"][sizes="32x32"]', 'favicon-32x32.png', 32],
+    ['link[rel="apple-touch-icon"]', 'apple-touch-icon.png', 180],
+  ] as const) {
+    const link = page.locator(selector);
+    await expect(link).toHaveAttribute('href', '/' + file);
+    const response = await page.request.get('/' + file);
+    expect(response.ok()).toBe(true);
+    expect(response.headers()['content-type']).toContain(size ? 'image/png' : 'image/svg+xml');
+    const dimensions = await link.evaluate(async (element: HTMLLinkElement) => {
+      const image = new Image();
+      image.src = element.href;
+      await image.decode();
+      return [image.naturalWidth, image.naturalHeight];
+    });
+    expect(dimensions).toEqual(size ? [size, size] : [150, 150]);
+  }
+
+  await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', '/site.webmanifest');
+  const manifest = await page.request.get('/site.webmanifest');
+  expect(manifest.ok()).toBe(true);
+  expect(await manifest.json()).toMatchObject({
+    name: 'CostLens UK',
+    icons: [
+      { src: 'favicon.svg', sizes: 'any' },
+      { src: 'favicon-32x32.png', sizes: '32x32' },
+      { src: 'apple-touch-icon.png', sizes: '180x180' },
+    ],
+  });
+});

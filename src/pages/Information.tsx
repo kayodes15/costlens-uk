@@ -15,7 +15,7 @@ export function isInformationPage(page: string): page is keyof typeof titles {
 
 export function InformationPage({ page }: { page: keyof typeof titles }) {
   return <article className="info-page information">
-    <h1>{titles[page]}</h1>
+    <h1 tabIndex={-1}>{titles[page]}</h1>
     {page === 'about' && <>
       <p>CostLens UK is a free, independent project for comparing pay, relocation budgets and home ownership scenarios across the UK.</p>
       <h2>Data and code</h2>

@@ -340,7 +340,7 @@ export function HomeOwnership({ tool, location, nation }: { tool: OwnershipTool;
   }
 
   return <section className="model-page">
-    <div className="tool-intro"><p className="eyebrow">Home Ownership</p><h1>{title}</h1><p className="lede">{intro}</p>
+    <div className="tool-intro"><p className="eyebrow">Home Ownership</p><h1 tabIndex={-1}>{title}</h1><p className="lede">{intro}</p>
       <p className="hint">Location context · {location}</p>
       <nav className="tool-switch" aria-label="Home ownership tools">
         {Object.entries(tools).map(([key, item]) => <a key={key} href={`#${key}`} aria-current={tool === key ? 'page' : undefined}>{item.title}</a>)}

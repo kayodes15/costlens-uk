@@ -186,7 +186,7 @@ export function Salary({ mode, data, location, loading }: {
   return (
     <section className="salary-page" aria-labelledby="salary-heading">
       <div className="tool-intro"><p className="eyebrow">Salary &amp; Pay Rise</p>
-      <h1 id="salary-heading">{comparison ? 'Has my pay kept up?' : 'What pay rise should I negotiate?'}</h1>
+      <h1 id="salary-heading" tabIndex={-1}>{comparison ? 'Has my pay kept up?' : 'What pay rise should I negotiate?'}</h1>
       <p className="lede">{comparison ? 'Compare past and current pay against UK inflation.' : 'Estimate the pay you’d need for a real increase in purchasing power.'}</p>
       <div className="tool-switch" aria-label="Salary tools">
         <a href="#salary" aria-current={comparison ? 'page' : undefined}>Pay comparison</a>

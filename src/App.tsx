@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ExternalLink } from './components/ExternalLink';
 import { EconomicSnapshot } from './components/EconomicSnapshot';
 import { LocationPicker } from './components/LocationPicker';
@@ -46,6 +46,7 @@ export function App() {
   const [loading, setLoading] = useState(true);
   const [location, setLocation] = useState<SelectedLocation | null>(null);
   const main = useRef<HTMLElement>(null);
+  const header = useRef<HTMLElement>(null);
   const previousPage = useRef(page);
 
   useEffect(() => {
@@ -65,12 +66,30 @@ export function App() {
     return () => window.removeEventListener('hashchange', navigate);
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (previousPage.current !== page) {
-      main.current?.focus();
+      window.scrollTo(0, 0);
+      main.current?.querySelector('h1')?.focus({ preventScroll: true });
       previousPage.current = page;
     }
   }, [page]);
+
+  useLayoutEffect(() => {
+    const element = header.current;
+    if (!element) return;
+
+    const root = document.documentElement;
+    const updateScrollPadding = () => {
+      root.style.setProperty('--sticky-header-height', `${element.getBoundingClientRect().height}px`);
+    };
+    const observer = new ResizeObserver(updateScrollPadding);
+    updateScrollPadding();
+    observer.observe(element, { box: 'border-box' });
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty('--sticky-header-height');
+    };
+  }, []);
 
   const selected = location;
   const salary = page === 'salary' || page === 'pay-rise';
@@ -80,7 +99,7 @@ export function App() {
   return (
     <>
       <a className="skip-link" href="#main-content" onClick={(event) => { event.preventDefault(); main.current?.focus(); }}>Skip to content</a>
-      <header className="site-header">
+      <header className="site-header" ref={header}>
         <div className="wrap header-inner">
           <a className="brand" href="#home"><span className="brand-mark" aria-hidden="true"><i /><i /><i /></span>CostLens <span>UK</span></a>
           <nav aria-label="Main navigation">
@@ -102,7 +121,7 @@ export function App() {
             <div className="wrap hero-inner">
               <div>
                 <p className="eyebrow">Cost of living in the UK</p>
-                <h1>Make life’s biggest financial decisions with confidence.</h1>
+                <h1 tabIndex={-1}>Make life’s biggest financial decisions with confidence.</h1>
                 <p className="hero-copy">Understand your salary, compare living costs and explore home ownership with transparent, evidence-based financial tools.</p>
                 <a className="button" href="#salary">Check your pay</a>
               </div>
@@ -112,7 +131,7 @@ export function App() {
         )}
         <div className="wrap page-body">
           {page === 'economic-insights' && (
-            <div className="insights-heading"><h1>Economic insights</h1><LocationPicker locations={data.locations} selected={selected} loading={loading} onSelect={setLocation} /></div>
+            <div className="insights-heading"><h1 tabIndex={-1}>Economic insights</h1><LocationPicker locations={data.locations} selected={selected} loading={loading} onSelect={setLocation} /></div>
           )}
           {(page === 'home' || page === 'economic-insights') && <EconomicSnapshot key={locationKey} data={data} location={selected} loading={loading} />}
           {page === 'home' && <HomeTools />}

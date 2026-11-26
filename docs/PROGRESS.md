@@ -1,5 +1,10 @@
 # CostLens UK release notes
 
+## Version 1.0.1
+
+- Added CostLens icons for browser tabs and home-screen bookmarks.
+- Kept the header visible while scrolling and moved keyboard focus to the page heading at the top after navigation.
+
 ## Version 1
 
 - The economic snapshot starts with UK figures and supports selecting a council. It shows house prices, private rents, earnings, inflation and interest rates, with coverage and source dates. Scotland and Northern Ireland rent estimates can use a wider rental market area. Northern Ireland district earnings come from NISRA.

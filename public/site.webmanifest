@@ -1,0 +1,13 @@
+{
+  "name": "CostLens UK",
+  "short_name": "CostLens",
+  "start_url": "./",
+  "display": "browser",
+  "theme_color": "#112a30",
+  "background_color": "#f5f8f7",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "favicon-32x32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

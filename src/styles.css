@@ -3,6 +3,7 @@
   color: #142d30;
   background: #f5f8f7;
   font-synthesis: none;
+  scroll-padding-top: calc(var(--sticky-header-height, 0px) + .5rem);
   --navy: #112a30;
   --green: #13614f;
   --mint: #aef5d5;
@@ -38,10 +39,11 @@ label { display: grid; gap: .3rem; font-size: .91rem; font-weight: 650; }
 summary { cursor: pointer; color: var(--green); font-weight: 650; width: fit-content; }
 details > :not(summary) { margin-top: .65rem; }
 .wrap { width: min(100% - 3.5rem, 74rem); margin-inline: auto; }
-.skip-link { position: absolute; top: .5rem; left: 1rem; z-index: 2; background: white; padding: .6rem; transform: translateY(-150%); }
+.skip-link { position: fixed; top: .5rem; left: 1rem; z-index: 3; background: white; padding: .6rem; transform: translateY(-150%); }
 .skip-link:focus { transform: none; }
 #main-content:focus { outline: none; }
-.site-header { background: #fff; border-bottom: 1px solid var(--line); }
+.site-header { position: sticky; top: 0; z-index: 2; background: #fff; border-bottom: 1px solid var(--line); }
+.site-header:has(.header-location[open]) { max-height: 50dvh; overflow: auto; }
 .header-inner, .footer-inner, .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .header-inner { min-height: 4.7rem; flex-wrap: wrap; padding-block: .8rem; }
 .header-location { padding-bottom: .8rem; }
@@ -144,7 +146,12 @@ th, td { padding: .45rem .35rem; border-bottom: 1px solid var(--line); overflow-
 }
 @media (max-width: 41rem) {
   .wrap { width: calc(100% - 2rem); }
-  .header-inner { gap: .7rem; }
+  .site-header .wrap { width: calc(100% - 1.5rem); }
+  .header-inner { min-height: 0; gap: .125rem; padding-block: .3rem; }
+  .site-header nav { width: 100%; column-gap: .5rem; row-gap: 0; }
+  .site-header nav a { display: inline-flex; align-items: center; min-height: 24px; font-size: .84rem; }
+  .header-location { padding-bottom: .25rem; }
+  .header-location > summary { min-height: 24px; line-height: 1.5; font-size: .88rem; }
   nav { gap: .45rem .85rem; }
   .hero-inner, .insights-heading, .salary-layout { grid-template-columns: minmax(0, 1fr); }
   .hero-inner { padding-block: 1.9rem; }
