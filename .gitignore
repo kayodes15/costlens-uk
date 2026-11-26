@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+.DS_Store
+*.tsbuildinfo
+playwright-report/
+test-results/
+__pycache__/
+.venv/
+.costlens-data.lock
+public/.costlens-stage-*/
+
+.wrangler/
